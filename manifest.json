@@ -1,0 +1,20 @@
+{
+  "name": "អក្សរទៅសំឡេង",
+  "short_name": "TTS",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "https://play-lh.googleusercontent.com/o9-f3xR8smLwCG-njVviYDF0uSVrSgifklLuKOQ9ZydL0Q-tAisp-wX95E0kh-u5OlzvUKuA2Z5YI4ByOf8NVA=w240-h480-rw",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+     {
+      "src": "https://play-lh.googleusercontent.com/o9-f3xR8smLwCG-njVviYDF0uSVrSgifklLuKOQ9ZydL0Q-tAisp-wX95E0kh-u5OlzvUKuA2Z5YI4ByOf8NVA=w240-h480-rw",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

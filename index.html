@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRT Voice Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta name="description" content="បង្កើតសំឡេង AI ពីអត្ថបទ SRT">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon"
+    href="https://play-lh.googleusercontent.com/o9-f3xR8smLwCG-njVviYDF0uSVrSgifklLuKOQ9ZydL0Q-tAisp-wX95E0kh-u5OlzvUKuA2Z5YI4ByOf8NVA=w240-h480-rw">
+  <script src="https://cdn.counter.dev/script.js" data-id="80f32266-2f00-44bf-bd73-5efdc9e791fb"
+    data-utcoffset="7"></script>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="/ads.css">
+
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #141421;
+      --surface-2: #1a1a2e;
+      --surface-3: #222236;
+      --border: #2d2d44;
+      --border-light: #3a3a55;
+      --text: #f0f0f0;
+      --text-muted: #9ca3af;
+      --text-secondary: #d1d5db;
+      --primary: #8b5cf6;
+      --primary-hover: #7c3aed;
+      --primary-light: #a78bfa;
+      --accent: #f59e0b;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --radius: 16px;
+      --radius-sm: 12px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(139, 92, 246, 0.03) 35px, rgba(139, 92, 246, 0.03) 70px),
+        repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(245, 158, 11, 0.03) 35px, rgba(245, 158, 11, 0.03) 70px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    span#btnText {
+      font-family: khmer os battambang;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      position: relative;
+    }
+
+    header::after {
+      content: 'Adminkh';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-10deg);
+      font-family: 'Kanit', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: rgba(139, 92, 246, 0.15);
+      letter-spacing: -5px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8b5cf6 0%, #f59e0b 50%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      position: relative;
+      display: inline-block;
+    }
+
+    header h1::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      background: linear-gradient(135deg, #8b5cf6, #f59e0b);
+      border-radius: 20px;
+      opacity: 0.1;
+      z-index: -1;
+      filter: blur(20px);
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 300;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      opacity: 0.8;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: var(--primary-light);
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title i {
+      color: var(--primary);
+    }
+
+    textarea {
+      width: 100%;
+      height: 280px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 20px;
+      font-family: 'Inter', monospace;
+      font-size: 0.95rem;
+      resize: vertical;
+      outline: none;
+      transition: var(--transition);
+      line-height: 1.8;
+    }
+
+    textarea:focus {
+      border-color: var(--primary);
+      background: var(--surface-3);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    select,
+    input[type="range"] {
+      width: 100%;
+    }
+
+    select {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      outline: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    select:hover {
+      border-color: var(--primary-light);
+    }
+
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 8px;
+      background: var(--surface-2);
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--primary);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+    }
+
+    .range-value {
+      min-width: 50px;
+      text-align: right;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--surface-2);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+    }
+
+    .toggle {
+      position: relative;
+      width: 56px;
+      height: 30px;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--surface-2);
+      border-radius: 30px;
+      transition: var(--transition);
+      border: 1px solid var(--border);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: var(--transition);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle input:checked+.toggle-slider {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .toggle input:checked+.toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      flex: 1;
+      min-width: 180px;
+      padding: 16px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    button:hover::before {
+      opacity: 1;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      color: white;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-3);
+      border-color: var(--primary-light);
+    }
+
+    .status {
+      margin-top: 24px;
+      padding: 18px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .status.loading {
+      display: flex;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: var(--primary-light);
+    }
+
+    .status.success {
+      display: flex;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: var(--success);
+    }
+
+    .status.error {
+      display: flex;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--danger);
+    }
+
+    .result {
+      display: none;
+      margin-top: 24px;
+    }
+
+    .result.show {
+      display: block;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 16px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      padding: 16px;
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+      line-height: 1.5;
+      padding: 12px 16px;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--accent);
+    }
+
+    .hint code {
+      background: var(--surface-3);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-family: 'Inter', monospace;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .khmer-pattern {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+
+    .khmer-pattern.top-right {
+      top: 20px;
+      right: 20px;
+      font-size: 80px;
+      font-family: 'Kanit', sans-serif;
+      transform: rotate(15deg);
+    }
+
+    .khmer-pattern.bottom-left {
+      bottom: 20px;
+      left: 20px;
+      font-size: 80px;
+      font-family: 'Kanit', sans-serif;
+      transform: rotate(-15deg);
+    }
+
+    footer.footer1 {
+      padding-bottom: 88px;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+
+    /* Loading animation */
+    .pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .5;
+      }
+    }
+  </style>
+  <!--Ads-->
+  <style>
+    
+    .hero-slider {
+      display: none;
+    }
+
+    .hero-slider {
+      position: relative;
+      width: 100%;
+      height: 450px;
+      overflow: hidden;
+    }
+
+    /* ===================
+   Banner Slides
+=================== */
+
+    .slide {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 45%;
+      /* feel free to adjust */
+      height: 38%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 1s ease;
+      border-radius: 8px;
+    }
+
+    .slide.active {
+      opacity: 1;
+    }
+
+    .slide a {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slide img {
+      width: 85%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* ===================
+   Banner Dots
+=================== */
+
+    .dots {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .5);
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background: white;
+    }
+
+    /* ===================
+   Footer Slider
+=================== */
+
+    .footer-slider {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 90px;
+      background: #111;
+      overflow: hidden;
+      z-index: 999;
+    }
+
+    .footer-item {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 10px 20px;
+      color: white;
+      text-decoration: none;
+      opacity: 0;
+      transition: opacity 1s ease;
+      justify-content: center;
+    }
+
+    .footer-item.active {
+      opacity: 1;
+    }
+
+    .footer-item img {
+      width: auto;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    /* ===================
+   Mobile
+=================== */
+
+    @media (max-width: 768px) {
+
+      .hero-slider {
+        height: 250px;
+      }
+
+      .caption {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        font-size: 14px;
+      }
+
+      .footer-slider {
+        height: 80px;
+      }
+    .footer-item img {
+      height: 120%;
+    }
+
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero-slider">
+    <div id="bannerSlides"></div>
+    <div id="bannerDots" class="dots"></div>
+  </div>
+  <div class="container">
+    <header>
+      <h1>SRT Voice Studio</h1>
+      <p>Convert subtitles to natural AI voiceover with perfect timing</p>
+    </header>
+
+    <div class="card">
+      <div class="khmer-pattern top-right">Adminkh</div>
+      <div class="khmer-pattern bottom-left">Adminkh</div>
+      <div class="card-title">
+        <i class="fas fa-closed-captioning"></i>
+        Subtitle (SRT)
+      </div>
+      <textarea id="srtText" placeholder="Paste your SRT content here...
+
+1
+00:00:01,000 --> 00:00:03,000
+[Male] Hello, how are you?
+
+2
+00:00:04,000 --> 00:00:06,000
+[Female] I'm fine, thank you."></textarea>
+      <div class="hint">
+        <i class="fas fa-lightbulb"></i>
+        Tip: Use <code>[Male]</code> or <code>[Female]</code> tags to auto-switch voice per line.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <i class="fas fa-sliders-h"></i>
+        Voice Settings
+      </div>
+      <div class="controls">
+        <div class="control-group">
+          <label>
+            <i class="fas fa-user"></i>
+            Default Voice
+          </label>
+          <select id="voiceName">
+            <option value="piseth">👱‍♂️ Piseth (ប្រុស)</option>
+            <option value="sreymom">👱 Sreymom (ស្រី)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>
+            <i class="fas fa-tachometer-alt"></i>
+            Speed
+          </label>
+          <div class="range-row">
+            <input type="range" id="speed" min="0.5" max="2" step="0.05" value="1" />
+            <span class="range-value" id="speedValue">1.00x</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>
+            <i class="fas fa-chart-line"></i>
+            Pitch
+          </label>
+          <div class="range-row">
+            <input type="range" id="pitch" min="-10" max="10" step="1" value="0" />
+            <span class="range-value" id="pitchValue">0</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="toggle-row">
+            <label>
+              <i class="fas fa-sync-alt"></i>
+              Auto Sync to timestamps
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="autoSync" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" id="generateBtn" onclick="generate()">
+        <i class="fas fa-magic"></i>
+        <span id="btnText">បង្កើតសំឡេង</span>
+      </button>
+      <button class="btn-secondary" onclick="clearAll()">
+        <i class="fas fa-trash"></i>
+        Clear All
+      </button>
+    </div>
+
+    <div id="status" class="status">
+      <i class="fas fa-info-circle"></i>
+      <span id="statusText"></span>
+    </div>
+
+    <div id="result" class="result">
+      <div class="card">
+        <div class="card-title">
+          <i class="fas fa-headphones"></i>
+          លទ្ធផល
+        </div>
+        <audio id="audioPlayer" controls></audio>
+        <div class="actions" style="margin-top: 20px;">
+          <button class="btn-primary" id="downloadBtn">
+            <i class="fas fa-download"></i>
+            ទាញយក MP3
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Inside the .stats section -->
+  <footer class="footer1">
+    <center class='footer'>
+      power by @ <a class="profile-facebook" href="https://www.facebook.com/atminkhm" target="_Blank"><span
+          id='tel'>adminkh</span></a>
+    </center>
+  </footer>
+  <footer class="footer-slider">
+    <div id="footerSlides"></div>
+  </footer>
+
+  <script>
+    const speedSlider = document.getElementById('speed');
+    const pitchSlider = document.getElementById('pitch');
+    const speedValue = document.getElementById('speedValue');
+    const pitchValue = document.getElementById('pitchValue');
+
+    speedSlider.addEventListener('input', () => {
+      speedValue.textContent = parseFloat(speedSlider.value).toFixed(2) + 'x';
+    });
+
+    pitchSlider.addEventListener('input', () => {
+      pitchValue.textContent = pitchSlider.value;
+    });
+
+    function clearAll() {
+      document.getElementById('srtText').value = '';
+      document.getElementById('result').classList.remove('show');
+      document.getElementById('status').style.display = 'none';
+      document.getElementById('audioPlayer').src = '';
+    }
+
+    async function generate() {
+      const srtText = document.getElementById('srtText').value.trim();
+      if (!srtText) {
+        showStatus('Please paste your SRT content first.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('generateBtn');
+      const btnText = document.getElementById('btnText');
+      btn.disabled = true;
+      btnText.innerHTML = '<div class="spinner"></div> Generating...';
+
+      showStatus('កំពុងបង្កើតសំឡេង... សូមរង់ចាំបន្តិច.', 'loading');
+      document.getElementById('result').classList.remove('show');
+
+      try {
+        const formData = new FormData();
+        formData.append('srtText', srtText);
+        formData.append('voiceName', document.getElementById('voiceName').value);
+        formData.append('speed', speedSlider.value);
+        formData.append('pitch', pitchSlider.value);
+        formData.append('autoSync', document.getElementById('autoSync').checked);
+
+        const response = await fetch('/api/generate-srt', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.message || 'Generation failed');
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        const audio = document.getElementById('audioPlayer');
+        audio.src = url;
+
+        const downloadBtn = document.getElementById('downloadBtn');
+        downloadBtn.onclick = () => {
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'srt_voiceover.mp3';
+          a.click();
+        };
+
+        document.getElementById('result').classList.add('show');
+        showStatus('បង្កើតសំឡេងបានជោគជ័យ!', 'success');
+
+      } catch (err) {
+        showStatus(err.message || 'Something went wrong', 'error');
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = 'Generate Voiceover';
+      }
+    }
+
+    function showStatus(message, type) {
+      const el = document.getElementById('status');
+      const textEl = document.getElementById('statusText');
+      textEl.textContent = message;
+      el.className = 'status ' + type;
+      el.style.display = 'flex';
+
+      if (type === 'loading') {
+        el.classList.add('pulse');
+      } else {
+        el.classList.remove('pulse');
+      }
+    }
+  </script>
+  <!--Ads-->
+  <script>
+    const API =
+      'https://script.google.com/macros/s/AKfycbxUnWyKtJGe_1_YBtMYRcqf1nHx8MqrYq1q_wM9wExdI5ISIIigS4Cs8MfC39xE7EvO/exec';
+
+    let ads = [];
+    let footer = [];
+
+    let bannerIndex = 0;
+    let footerIndex = 0;
+
+    let bannerTimer;
+    let footerTimer;
+
+    loadData();
+
+    async function loadData() {
+      try {
+
+        const response =
+          await fetch(API + '?t=' + Date.now());
+
+        const data =
+          await response.json();
+
+        ads = data.ads || [];
+        footer = data.footer || [];
+
+        renderBanner();
+        renderFooter();
+
+        startSlider();
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderBanner() {
+      const slides =
+        document.getElementById('bannerSlides');
+
+      const dots =
+        document.getElementById('bannerDots');
+
+      slides.innerHTML = '';
+      dots.innerHTML = '';
+
+      ads.forEach((item, i) => {
+
+        const div =
+          document.createElement('div');
+
+        div.className =
+          'slide' + (i === 0 ? ' active' : '');
+
+        div.innerHTML = `
+      <a href="${item.link}" target="_blank">
+        <img src="${item.imageUrl}"
+             loading="lazy">
+      </a>
+    `;
+
+        /*  div.innerHTML = `
+            <a href="${item.link}" target="_blank">
+              <img src="${item.imageUrl}"
+                   loading="lazy">
+              <div class="caption">
+                ${item.caption}
+              </div>
+            </a>
+          `;
+      */
+        slides.appendChild(div);
+
+        const dot =
+          document.createElement('div');
+
+        dot.className =
+          'dot' + (i === 0 ? ' active' : '');
+
+        dot.onclick = () =>
+          showBanner(i);
+
+        dots.appendChild(dot);
+      });
+    }
+
+    function renderFooter() {
+      const container =
+        document.getElementById('footerSlides');
+
+      container.innerHTML = '';
+
+      footer.forEach((item, i) => {
+
+        const a =
+          document.createElement('a');
+
+        a.className =
+          'footer-item' +
+          (i === 0 ? ' active' : '');
+
+        a.href = item.link;
+        a.target = '_blank';
+
+        a.innerHTML = `
+      <img src="${item.imageUrl}"
+           loading="lazy">
+    `;
+
+        /*
+            a.innerHTML = `
+              <img src="${item.imageUrl}"
+                   loading="lazy">
+              <div>${item.text}</div>
+            `;
+        */
+        container.appendChild(a);
+      });
+    }
+
+    function showBanner(index) {
+      const slides =
+        document.querySelectorAll('.slide');
+
+      const dots =
+        document.querySelectorAll('.dot');
+
+      slides[bannerIndex]?.classList.remove('active');
+      dots[bannerIndex]?.classList.remove('active');
+
+      bannerIndex = index;
+
+      slides[bannerIndex]?.classList.add('active');
+      dots[bannerIndex]?.classList.add('active');
+    }
+
+    function nextBanner() {
+      if (!ads.length) return;
+
+      showBanner(
+        (bannerIndex + 1) % ads.length
+      );
+    }
+
+    function nextFooter() {
+      const slides =
+        document.querySelectorAll('.footer-item');
+
+      if (!slides.length) return;
+
+      slides[footerIndex]
+        .classList.remove('active');
+
+      footerIndex =
+        (footerIndex + 1) % slides.length;
+
+      slides[footerIndex]
+        .classList.add('active');
+    }
+
+    function startSlider() {
+      clearInterval(bannerTimer);
+      clearInterval(footerTimer);
+
+      bannerTimer =
+        setInterval(nextBanner, 7000);
+
+      footerTimer =
+        setInterval(nextFooter, 7000);
+    }
+
+    /* Reload data every 5 minutes */
+    setInterval(loadData, 300000);
+  </script>
+</body>
+</html>
